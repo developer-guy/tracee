@@ -182,10 +182,9 @@ ifneq ("$(SNAPSHOT)", "1")
 	# push container images to docker hub
 	#
 	$(CMD_DOCKER) push $(PUSH_DOCKER_REPO):latest
-
-	COSIGN_EXPERIMENTAL=1 $(CMD_COSIGN) sign $(PUSH_DOCKER_REPO)@$(shell docker inspect --format='{{index .RepoDigests 0}}' $(PUSH_DOCKER_REPO):latest | awk -F'@' '{print $2}')
+	COSIGN_EXPERIMENTAL=1 $(CMD_COSIGN) sign $(PUSH_DOCKER_REPO)@$(shell crane digest $(PUSH_DOCKER_REPO):latest)
 	$(CMD_DOCKER) push $(PUSH_DOCKER_REPO):$(IMAGE_TAG)
-	COSIGN_EXPERIMENTAL=1 $(CMD_COSIGN) sign $(PUSH_DOCKER_REPO)@$(shell docker inspect --format='{{index .RepoDigests 0}}' $(PUSH_DOCKER_REPO):full | awk -F'@' '{print $2}')
+	COSIGN_EXPERIMENTAL=1 $(CMD_COSIGN) sign $(PUSH_DOCKER_REPO)@$(shell crane digest $(PUSH_DOCKER_REPO):full)
 	$(CMD_DOCKER) push $(PUSH_DOCKER_REPO):full
 	
 	$(CMD_DOCKER) push $(PUSH_DOCKER_REPO):full-$(IMAGE_TAG)
